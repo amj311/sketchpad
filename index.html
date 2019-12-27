@@ -8,14 +8,34 @@
     <title>Draw!</title>
 </head>
 <body>
-    <div id="sketchFrame">
-        <div id="canvasWrapper">
-            <svg id="sketchCanvas" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
-                <polyline id="newPath" />
-            </svg>
+    <div id="app">
+        <div id="sketchFrame">
+            <div id="canvasWrapper">
+                <svg id="sketchCanvas" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+                    <g id="strokes"></g>
+                    <polyline id="newPath" :points="newPath" :style="{stroke: penColor, strokeWidth: penWidth, strokeOpacity: penOpacity,}" />
+                </svg>
+            </div>
         </div>
+    
+        <p>
+            <label>Width</label>
+            <input type="range" v-model="penWidth" min="1" max="100" step="1">
+            <input type="number" v-model="penWidth" min="1" max="100" step="1">
+        </p>
+        <p>
+            <label>Opacity</label>
+            <input type="range" v-model="penOpacity" min="0" max="1" step=".1">
+            <input type="number" v-model="penOpacity" min="0" max="1" step=".1">    
+        </p>
+        <p>
+            <input type="color" v-model="penColor">
+        </p>
+
+
     </div>
         
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="draw_test.js"></script>
 </body>
 </html>

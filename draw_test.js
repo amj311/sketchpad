@@ -1,31 +1,56 @@
+var app = new Vue({
+    el: '#app',
+
+    data: {
+        penIsDown: false,
+        wait: false,
+        waitTime: 10,
+        penColor: '#000',
+        penOpacity: .5,
+        penWidth: 10,        
+
+        lastX: null,
+        lastY: null,
+
+        newPath: '',
+    },
+
+    // created: {
+
+    // },
+
+    methods: {
+
+    }
+    
+})
+
 const pen = {
-    isDown: false,
+    penIsDown: false,
     wait: false,
     waitTime: 10,
-    color: '#000',
-    opacity: .5,
-    width: 10,
+    penColor: '#000',
+    penOpacity: .5,
+    penWidth: 10,
 
 
     lastX: null,
     lastY: null,
     
-    newPath: '',
     newPathEl: document.getElementById('newPath'),
     
     addPointToPath(x, y) {
-        this.newPath += ` ${x},${y}`
+        app.newPath += ` ${x},${y}`
         this.applyNewPath()
     },
     resetNewPath() {
-        this.newPath = '';
-        this.newPathEl.removeAttribute('points')
-        this.newPathEl.setAttribute('stroke', this.color)
-        this.newPathEl.setAttribute('stroke-opacity', this.opacity)
-        this.newPathEl.setAttribute('stroke-width', this.width)
+        app.newPath = '';
+        this.newPathEl.setAttribute('stroke', this.penColor)
+        this.newPathEl.setAttribute('stroke-opacity', this.penOpacity)
+        this.newPathEl.setAttribute('stroke-width', this.penWidth)
     },
     applyNewPath() {
-        pen.newPathEl.setAttribute('points', this.newPath)
+        pen.newPathEl.setAttribute('points', app.newPath)
     },
 
 
@@ -69,7 +94,7 @@ const pen = {
         
         canvas.setUnit();
 
-        pen.isDown = true;
+        pen.penIsDown = true;
     },
     initPoint(e) {
         pen.lastX = canvas.unit*e.offsetX;
@@ -80,7 +105,7 @@ const pen = {
 
     },
     movePen(e) {  
-        if (pen.isDown) pen.drawPoint(e)
+        if (pen.penIsDown) pen.drawPoint(e)
     },
     drawPoint(e) {
         if(!pen.wait) {
@@ -103,9 +128,9 @@ const pen = {
         }
     },
     endDraw(e) {
-        pen.isDown = false;
+        pen.penIsDown = false;
 
-        canvas.submitPath(pen.newPath)
+        canvas.submitPath(app.newPath)
         pen.resetNewPath()
     },
 
@@ -115,6 +140,7 @@ const pen = {
 const canvas = {
     el: document.getElementById('sketchCanvas'),
     box: document.getElementById('canvasWrapper'),
+    strokes: document.getElementById('strokes'),
     strokeIdx: 0,
 
     dim: 1000,
@@ -128,7 +154,7 @@ const canvas = {
         let newPathEl = pen.newPathEl.cloneNode()
         newPathEl.id = `stroke_`+this.strokeIdx;
 
-        canvas.el.append(newPathEl)
+        canvas.strokes.append(newPathEl)
 
         this.strokeIdx++
     },
