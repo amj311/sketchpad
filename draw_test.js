@@ -6,7 +6,7 @@ var app = new Vue({
         wait: false,
         waitTime: 10,
         penColor: '#000',
-        penOpacity: .5,
+        penOpacity: 1,
         penWidth: 10,        
 
         lastX: null,
