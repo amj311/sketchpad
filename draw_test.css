@@ -1,0 +1,31 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+#sketchFrame {
+    margin: 0 auto;
+    width: 100vw;
+    height: 100vw;
+    padding: 5vw;
+    display: flex;
+}
+
+#canvasWrapper {
+    width: 100%;
+    height: 100%;
+    border: 1px solid;
+}
+
+#sketchCanvas {
+    width: 100%;
+    height: 100%;
+}
+svg#sketchCanvas polyline {
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: transparent;
+}
