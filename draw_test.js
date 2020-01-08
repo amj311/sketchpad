@@ -2,36 +2,109 @@ var app = new Vue({
     el: '#app',
 
     data: {
-        penIsDown: false,
+        toolIsDown: false,
         wait: false,
         waitTime: 10,
-        penColor: '#000',
+        penColor: '#000000',
         penOpacity: 1,
-        penWidth: 10,        
+        penWidth: 10,
 
-        lastX: null,
-        lastY: null,
+        loc: {
+            x: null,
+            y: null,
+        },
+        lastLoc: {
+            x: null,
+            y: null,
+        },
 
         newPath: '',
+        
+        activeTool: {},
+        toolkit: {
+            pen: {
+                name: 'Pen',
+                init() {
+                    console.log('i am '+this.name)
+                },
+                handleDown(loc) {
+                    console.log('down')
+                    pen.beginDraw()
+                },
+                handleMove(loc) {
+
+                },
+                handleUp(loc) {
+
+                },
+            },
+
+            eraser: {
+                name: 'Eraser',
+
+                init() {
+                    console.log('i am '+this.name)
+                },
+                handleDown(loc) {
+                    console.log('down')
+                },
+                handleMove(loc) {
+                    this.removeStrokes()
+                },
+                handleUp(loc) {
+
+                },
+
+
+                removeStrokes() {
+                },
+                distanceToPoint(loc) {
+                }
+            },
+        },
+
     },
 
-    // created: {
-
-    // },
+    created() {
+        this.selectTool(this.toolkit.pen)
+    },
 
     methods: {
 
+        selectTool(tool) {
+            this.activeTool = tool;
+            this.activeTool.init();
+        },
+
+        initPoint(loc){
+            pen.lastX = canvas.unit*loc.offsloctX;
+            pen.lastY = canvas.unit*e.offsetY;
+        },
+
+        handleToolDown(loc) {
+            // track mouse position
+            this.toolIsDown = true;
+
+            pen.initPoint(loc)
+
+            this.activeTool.handleDown(loc)
+        },
+        handleToolMove(loc) {
+            //track mouse position
+
+
+            if(this.toolIsDown) this.activeTool.handleMove(loc)
+        },
+        handleToolUp() {
+            this.toolIsDown = false;
+
+            this.activeTool.handleDown()
+        },
     }
     
 })
 
 const pen = {
-    penIsDown: false,
-    wait: false,
-    waitTime: 10,
-    penColor: '#000',
-    penOpacity: .5,
-    penWidth: 10,
 
 
     lastX: null,
@@ -45,9 +118,6 @@ const pen = {
     },
     resetNewPath() {
         app.newPath = '';
-        this.newPathEl.setAttribute('stroke', this.penColor)
-        this.newPathEl.setAttribute('stroke-opacity', this.penOpacity)
-        this.newPathEl.setAttribute('stroke-width', this.penWidth)
     },
     applyNewPath() {
         pen.newPathEl.setAttribute('points', app.newPath)
@@ -55,10 +125,8 @@ const pen = {
 
 
 
-    onDown(e) {
-        console.log('down')
-        pen.beginDraw()
-        pen.initPoint(e)
+    handleMouseDown(e) {
+        app.handleToolDown(e)
     },
     handleMouseMove(e) {
         pen.movePen(e)
@@ -77,7 +145,7 @@ const pen = {
 
     handleTouchStart(e){
         e.preventDefault()
-        pen.onDown(pen.getTouchPos(e.touches[0]))
+        app.activeTool.handleDown(pen.getTouchPos(e.touches[0]))
     },
     handleTouchMove(e){
         pen.movePen(pen.getTouchPos(e.touches[0]))
@@ -108,7 +176,7 @@ const pen = {
         if (pen.penIsDown) pen.drawPoint(e)
     },
     drawPoint(e) {
-        if(!pen.wait) {
+        if(!app.wait) {
             // let deltaX = canvas.unit*e.offsetX - pen.lastX;
             // let deltaY = canvas.unit*e.offsetY - pen.lastY;
 
@@ -121,9 +189,9 @@ const pen = {
             pen.lastX = canvas.unit*e.offsetX;
             pen.lastY = canvas.unit*e.offsetY;
 
-            if (pen.waitTime > 0){
-                pen.wait = true;
-                setTimeout( function() { pen.wait = false }, pen.waitTime )
+            if (app.waitTime > 0){
+                app.wait = true;
+                setTimeout( function() { app.wait = false }, app.waitTime )
             }
         }
     },
@@ -168,7 +236,7 @@ const canvas = {
 
 canvas.init();
 
-canvas.el.addEventListener('mousedown', pen.onDown)
+canvas.el.addEventListener('mousedown', pen.handleMouseDown)
 canvas.el.addEventListener('mousemove', pen.handleMouseMove)
 document.addEventListener('mouseup', pen.handleMouseUp)
 
